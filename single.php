@@ -1,23 +1,19 @@
 <?php
 global $current_user;
+global $post;
 get_currentuserinfo();
 
 $page_conta = get_page_by_title('Minha conta');
+
+get_header();
 ?>
     <div id="main-page" class="small-12 left">
       <div class="divide-30"></div>
       <div class="row">
 
         <div id="last-posts" class="small-9 columns">
-<?php
-  $args = array( 'posts_per_page' => 1, 'orderby' => 'date', 'post_status' => 'publish' );
-  $posts = get_posts( $args );
-  if($posts):
-    global $post;
-    $author = get_the_author();
-?>
           <header class="divide-20">
-            <p class="font-small"><time>Vídeo publicado em <?php the_time( 'd \d\e F \d\e Y' ); ?> por <a href="<?php echo get_author_posts_url($post->post_author); ?>"><?php echo get_the_author_meta( 'display_name', $post->post_author ); ?></a></time></p>
+            <p class="font-small"><time>Vídeo publicado em <?php the_time( 'd \d\e F \d\e Y' ); ?> por <a href="#"><?php the_author(); ?></a></time></p>
             <h4 class="font-bold"><?php the_title(); ?></h4>
           </header>
           <figure class="flex-video">
@@ -32,42 +28,14 @@ $page_conta = get_page_by_title('Minha conta');
               <a href="#" class="left"><i class="fi-social-google-plus"></i></a>
             </h1>
           </nav>
-<?php endif; ?>
 
-          <nav id="last-videos" class="small-12 left">
-            <header class="divide-20">
-              <h4 class="font-bold primary"><span class="fi-thumbnails"></span> Vídeos mais recentes</h4>
-            </header>
-
-            <ul class="vertical medium-horizontal menu">
-<?php
-  $args = array( 'posts_per_page' => 12, 'orderby' => 'date', 'offset' => 2, 'post_status' => 'publish' );
-  $posts = get_posts( $args );
-  if($posts):
-    global $post;
-    $author = get_the_author();
-?>
-              <li>
-                <a href="<?php the_permalink(); ?>" class="d-table th">
-                  <div class="d-table-cell small-12 text-center">
-                    <span class="fi-video"></span>
-                    <h6 class="font-bold small-12 left">
-                      <?php the_title(); ?>
-                    </h4>
-                  </div>
-                </a>
-              </li>
-
-<?php endif; ?>
-            </ul>
-          </nav>
         </div>
 
         <div id="user-bar" class="small-3 columns">
           <ul class="no-bullet">
             <li><a href="<?php echo home_url(); ?>"><span class="fi-home"></span> <span>Início</span></a></li>
             <li><a href="<?php echo get_page_link($page_conta->ID); ?>"><span class="fi-torso"></span> <span>Minha conta</span></a></li>
-            <li><a href="<?php echo get_author_posts_url($current_user->ID); ?>"><span class="fi-video"></span> <span>Meus vídeos</span></a></li>
+            <li><a href="#"><span class="fi-video"></span> <span>Meus vídeos</span></a></li>
           </ul>
 
           <ul id="popular" class="no-bullet">
@@ -91,3 +59,6 @@ wp_reset_query();
 
       </div>
     </div>
+<?php
+get_footer();
+?>

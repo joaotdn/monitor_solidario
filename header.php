@@ -1,3 +1,10 @@
+<?php
+if ( is_user_logged_in() ) {
+  global $current_user;
+  get_currentuserinfo();
+  $page_conta = get_page_by_title('Minha conta');
+}
+?>
 <!doctype html>
 <html class="no-js" lang="pt-br">
   <head>
@@ -31,7 +38,7 @@
           </div>
 
           <div class="top-bar-right">
-            <ul class="menu bg-primary">
+            <ul class="menu bg-primary user-login-data">
               <li><input type="email" placeholder="Seu email" class="small-12 medium-4"></li>
               <li><input type="password" placeholder="Sua senha" class="small-12 medium-4"></li>
               <li><button type="button" class="success button sign-user">Entrar</button></li>
@@ -50,8 +57,9 @@
           <div class="top-bar-right">
             <div class="divide-10"></div>
             <ul class="menu bg-primary white">
-              <li>Olá João</li>
-              <li class="search-input"><button type="button" class="success button">Publique um vídeo!</button></li>
+              <li>Olá <?php echo $current_user->display_name; ?></li>
+              <li class="search-input"><a href="<?php echo get_page_link($page_conta->ID); ?>" class="success button">Publique um vídeo!</a></li>
+              <li><a href="<?php echo wp_logout_url( home_url() ); ?>" class="left white">Sair</a></li>
             </ul>
           </div>
         </div>

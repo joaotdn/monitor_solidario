@@ -37,28 +37,28 @@
                 <label for="nome" class="text-right">Nome</label>
               </div>
               <div class="small-9 columns">
-                <input name="nome" type="text" id="nome" placeholder="Seu nome">
+                <input name="nome" type="text" id="nome" placeholder="Seu nome" title="Seu nome" required>
               </div>
 
               <div class="small-3 columns">
                 <label for="email" class="text-right">E-mail</label>
               </div>
               <div class="small-9 columns">
-                <input name="email" type="email" id="email" placeholder="Seu e-mail">
+                <input name="email" type="email" id="email" placeholder="Seu e-mail" title="Seu e-mail" required>
               </div>
 
               <div class="small-3 columns">
                 <label for="instituicao" class="text-right">Instituição</label>
               </div>
               <div class="small-9 columns">
-                <input name="instituicao" type="text" id="instituicao" placeholder="Onde você estuda?">
+                <input name="instituicao" type="text" id="instituicao" placeholder="Onde você estuda?" title="Onde você estuda?" required>
               </div>
 
               <div class="small-3 columns">
                 <label for="senha" class="text-right">Senha</label>
               </div>
               <div class="small-9 columns">
-                <input name="senha" type="password" id="senha" placeholder="Defina sua senha de acesso">
+                <input name="senha" type="password" id="senha" placeholder="Defina sua senha de acesso" title="Defina sua senha de acesso" required>
               </div>
 
               <div class="small-12 columns text-center">

@@ -28,7 +28,7 @@ function plandd_acf_dir( $dir ) {
  */
 include_once( get_stylesheet_directory() . '/includes/acf/acf.php' );
 include_once( get_stylesheet_directory() . '/includes/acf-repeater/acf-repeater.php' );
-//define( 'ACF_LITE' , true );
+define( 'ACF_LITE' , true );
 //include_once( get_stylesheet_directory() . '/includes/acf/preconfig.php' );
 
 /**
@@ -78,12 +78,43 @@ function remove_admin_bar() {
 add_action('after_setup_theme', 'remove_admin_bar');
 
 /**
+ * logar usuários
+ */
+add_action('wp_ajax_nopriv_ms_user_login', 'ms_user_login');
+add_action('wp_ajax_ms_user_login', 'ms_user_login');
+
+function ms_user_login() {
+	$login = $_GET['user_login'];
+	$pass = $_GET['user_senha'];
+
+	if(!empty($login) && !empty($pass)) {
+		$login = filter_var($login,FILTER_SANITIZE_STRING);
+		$pass = filter_var($pass,FILTER_SANITIZE_STRING);
+
+		$creds = array();
+	    $creds['user_login'] =  $login;
+	    $creds['user_password'] = $pass;
+	    $creds['remember'] = true;
+
+	    $user_login = wp_signon( $creds, false );
+	    if ( is_wp_error($user_login) )
+	        echo $user_login->get_error_message();
+	} else {
+		print('false');
+		exit();
+	}
+
+	exit();
+}
+
+/**
  * Cadastra usuarios
  */
 add_action('wp_ajax_nopriv_ms_add_user', 'ms_add_user');
 add_action('wp_ajax_ms_add_user', 'ms_add_user');
 
 function ms_add_user() {
+	global $wpdb;
 	$user = $_GET['user_data'];
 	$params = array();
 	parse_str($user, $params);
@@ -103,7 +134,7 @@ function ms_add_user() {
 			$valNome = true;
 		}
 	} else {
-		print('error'); // o nome é obrigatório
+		print('Nome inválido'); // o nome é obrigatório
 		exit();
 	}
 
@@ -114,7 +145,7 @@ function ms_add_user() {
 			$valEmail = true;
 		}
 	} else {
-		print('error'); // o email é obrigatório
+		print('E-mail inválido'); // o email é obrigatório
 		exit();
 	}
 
@@ -122,13 +153,13 @@ function ms_add_user() {
 	if(array_key_exists('instituicao', $params) && !empty($params['instituicao'])) {
 		$instituicao = filter_var($params['instituicao'],FILTER_SANITIZE_STRING);
 		if(!$instituicao || strlen($instituicao) > 300) {
-			print('error'); //instituicao inválido
+			print('Instituição inválida'); //instituicao inválido
 			exit();
 		} else {
 			$valInstituicao = true;
 		}
 	} else {
-		print('error'); // o instituicao é obrigatório
+		print('Instituição inválida'); // o instituicao é obrigatório
 		exit();
 	}
 
@@ -136,17 +167,119 @@ function ms_add_user() {
 	if(array_key_exists('senha', $params) && !empty($params['senha'])) {
 		$senha = filter_var($params['senha'],FILTER_SANITIZE_STRING);
 		if(!$senha || strlen($senha) > 300 || strlen($senha) < 4) {
-			print('error'); //senha inválido
+			print('Senha inválida'); //senha inválido
 			exit();
 		} else {
 			$valSenha = true;
 		}
 	} else {
-		print('error'); // o senha é obrigatório
+		print('Senha inválida'); // o senha é obrigatório
 		exit();
 	}
 
+	if($valNome && $valEmail && $valInstituicao && $valSenha) {
+		$user_id = username_exists( $email );
 
+		if( !$user_id ) {
+			//O usuário não existe, crie
+			$wpdb->insert( 
+		      'wp_users',
+		      array(
+		        "user_login" => $email,
+		        "user_pass" => md5($senha),
+		        "user_email" => $email,
+		        'display_name' => $nome
+		      )
+		    );
+		    $wpdb->insert_id;
+
+		    $creds = array();
+		    $creds['user_login'] =  $email;
+		    $creds['user_password'] = $senha;
+		    $creds['remember'] = true;
+
+		    $user_login = wp_signon( $creds, false );
+		    if ( is_wp_error($user_login) )
+		        echo $user_login->get_error_message();
+
+		} else {
+			print('O usuário já está cadastrado.');
+			exit();
+		}
+
+	} else {
+		print('Não foi possível cadastrar este usuário.');
+		exit();
+	}
+
+	print('Usuário cadastrado com sucesso');
+	exit();
+}
+
+/**
+ * Cadastra videos
+ */
+add_action('wp_ajax_nopriv_ms_send_video', 'ms_send_video');
+add_action('wp_ajax_ms_send_video', 'ms_send_video');
+
+function ms_send_video() {
+	global $current_user;
+	$_post = $_GET['data_post'];
+	$params = array();
+	parse_str($_post, $params);
+
+	$video_id = post_exists( $params['video-title'] );
+
+	if(!$video_id) {
+		$video_id = wp_insert_post( array(
+            "post_title" => $params['video-title'],
+            "post_type" => 'post',
+            "post_status" => "pending",
+            "post_author" => $current_user->ID
+        ));
+        update_field('ms_video', $params['video-embed'], $video_id);
+	} else {
+		echo "false";
+		exit();
+	}
+
+	exit();
+}
+
+//mais lidas
+function wpb_set_post_views($postID) {
+    $count_key = 'wpb_post_views_count';
+    $count = get_post_meta($postID, $count_key, true);
+    if($count==''){
+        $count = 0;
+        delete_post_meta($postID, $count_key);
+        add_post_meta($postID, $count_key, '0');
+    }else{
+        $count++;
+        update_post_meta($postID, $count_key, $count);
+    }
+}
+remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0);
+
+function wpb_track_post_views ($post_id) {
+    if ( !is_single() ) return;
+    if ( empty ( $post_id) ) {
+        global $post;
+        $post_id = $post->ID;    
+    }
+    wpb_set_post_views($post_id);
+}
+add_action( 'wp_head', 'wpb_track_post_views');
+
+function wpb_get_post_views($postID){
+    $count_key = 'wpb_post_views_count';
+    $count = get_post_meta($postID, $count_key, true);
+    if($count==''){
+        delete_post_meta($postID, $count_key);
+        add_post_meta($postID, $count_key, '0');
+        return "0 View";
+    }
+    return $count.' Views';
 }
 
 ?>

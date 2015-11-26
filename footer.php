@@ -3,7 +3,7 @@
     <footer id="footer" class="small-12 left bg-primary">
       <div class="row">
         <div class="small-12 columns">
-          <h4 class="font-bold no-margin small-12 left"><a href="#" class="white left" title="Página principal"><i class="fi-torsos-all"></i> <span>Monitor Solidário</span></a> <span class="right font-small"><a href="#" class="white">O que é o monitor solidário?</a></span></h4>
+          <h4 class="font-bold no-margin small-12 left"><a href="<?php echo home_url(); ?>" class="white left" title="Página principal"><i class="fi-torsos-all"></i> <span>Monitor Solidário</span></a> <span class="right font-small"><a href="#" class="white">O que é o monitor solidário?</a></span></h4>
           <p class="font-small no-margin">Projeto desenvolvido para fins acadêmicos</p>
         </div>
       </div>
