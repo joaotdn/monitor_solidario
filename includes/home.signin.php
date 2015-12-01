@@ -10,11 +10,11 @@ $page_conta = get_page_by_title('Minha conta');
 
         <div id="last-posts" class="small-9 columns">
 <?php
-  $args = array( 'posts_per_page' => 1, 'orderby' => 'date', 'post_status' => 'publish' );
-  $posts = get_posts( $args );
-  if($posts):
+ $args = array( 'posts_per_page' => 1, 'orderby' => 'date', 'post_status' => 'publish' );
+$the_query = new WP_Query( $args );
+
+if ( $the_query->have_posts() ) :  while ( $the_query->have_posts() ) : $the_query->the_post();
     global $post;
-    $author = get_the_author();
 ?>
           <header class="divide-20">
             <p class="font-small"><time>Vídeo publicado em <?php the_time( 'd \d\e F \d\e Y' ); ?> por <a href="<?php echo get_author_posts_url($post->post_author); ?>"><?php echo get_the_author_meta( 'display_name', $post->post_author ); ?></a></time></p>
@@ -32,7 +32,9 @@ $page_conta = get_page_by_title('Minha conta');
               <a href="#" class="left"><i class="fi-social-google-plus"></i></a>
             </h1>
           </nav>
-<?php endif; ?>
+<?php
+    endwhile; wp_reset_postdata(); endif;
+?>
 
           <nav id="last-videos" class="small-12 left">
             <header class="divide-20">
@@ -41,11 +43,11 @@ $page_conta = get_page_by_title('Minha conta');
 
             <ul class="vertical medium-horizontal menu">
 <?php
-  $args = array( 'posts_per_page' => 12, 'orderby' => 'date', 'offset' => 2, 'post_status' => 'publish' );
-  $posts = get_posts( $args );
-  if($posts):
+ $args = array( 'posts_per_page' => 12, 'orderby' => 'date', 'offset' => 1, 'post_status' => 'publish' );
+$the_query = new WP_Query( $args );
+
+if ( $the_query->have_posts() ) :  while ( $the_query->have_posts() ) : $the_query->the_post();
     global $post;
-    $author = get_the_author();
 ?>
               <li>
                 <a href="<?php the_permalink(); ?>" class="d-table th">
@@ -57,8 +59,9 @@ $page_conta = get_page_by_title('Minha conta');
                   </div>
                 </a>
               </li>
-
-<?php endif; ?>
+<?php
+    endwhile; wp_reset_postdata(); endif;
+?>
             </ul>
           </nav>
         </div>

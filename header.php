@@ -16,6 +16,7 @@ if ( is_user_logged_in() ) {
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,800,700,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/fonts/foundation-icons.css">
     <link rel="stylesheet" href="<?php echo get_template_directory_uri();?>/css/app.css">
+
     <script>
       //<![CDATA[
       var getData = {
@@ -41,8 +42,11 @@ if ( is_user_logged_in() ) {
             <ul class="menu bg-primary user-login-data">
               <li><input type="email" placeholder="Seu email" class="small-12 medium-4"></li>
               <li><input type="password" placeholder="Sua senha" class="small-12 medium-4"></li>
-              <li><button type="button" class="success button sign-user">Entrar</button></li>
+              <li><button type="button" class="success button sign-user small-12">Entrar</button></li>
             </ul>
+            <p class="font-small no-margin text-right" style="padding-top: 8px;">
+              <a href="#" class="white" data-open="get-pass">Esqueceu a senha?</a>
+            </p>
           </div>
         </div>
       <?php else: ?>
@@ -50,7 +54,8 @@ if ( is_user_logged_in() ) {
           <div class="top-bar-left">
             <ul class="menu bg-primary">
               <li><h1 class="font-bold no-margin left"><a href="<?php echo home_url(); ?>" class="white" title="Página principal"><i class="fi-torsos-all"></i></a></h1></li>
-              <li class="search-input"><input type="search" placeholder="O que você procura?"></li>
+              <li class="search-input"><input type="search" placeholder="O que você procura?" class="small-12"></li>
+              <li><a href="#" class="fi-x white close-search hide"></a></li>
             </ul>
           </div>
 

@@ -167,6 +167,25 @@ header.top-bar {
 	}
 }
 
+//busca
+.close-search {
+	padding-left: 0 !important;
+}
+#search-content {
+	position: absolute;
+	left: 0;
+	top: rem-calc(87);
+	height: 100%;
+	background-color: rgba(#fff,.9);
+	z-index: 999;
+
+	figure {
+		margin-bottom: rem-calc(10);
+		padding-bottom: rem-calc(10);
+		border-bottom: 1px solid #eaeaea;
+	}
+}
+
 //usuario logado
 .search-input {
 	padding-left: rem-calc(20);

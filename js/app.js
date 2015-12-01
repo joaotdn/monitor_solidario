@@ -19,7 +19,7 @@ $(document).foundation();
 	});
 
 	//Cadastrar usuário
-	$('#add-user').on('submit', function(event) {
+	$(document).on('submit', '#add-user', function(event) {
 		event.preventDefault();
 		var data_form = $(this).serialize();
 
@@ -59,6 +59,7 @@ $(document).foundation();
 					} else{
 						location.reload();
 					}
+					//console.log(data);
 				}
 			});
 		} else {
@@ -66,7 +67,7 @@ $(document).foundation();
 		}
 	});
 
-	//
+	//Enviar video
 	$(document).on('submit', '.send-video', function(event) {
 		event.preventDefault();
 		var data_form = $(this).serialize();
@@ -80,12 +81,58 @@ $(document).foundation();
 				if(data === 'false') {
 					alert('Esse vídeo já existe!');
 				} else{
-					alert('Vídeo publicado com sucesso!');
+					alert('Vídeo publicado com sucesso! Aguarde a aprovação da moderação.');
 					location.reload();
 				}
 			}
 		});
 
 	});
+
+	//recuperar senha
+	$(document).on('submit', '#recovery-pass', function(event) {
+		event.preventDefault();
+		var user_email = $(this).find('input[type="email"]').val();
+
+		$.ajax({
+			data: {
+				action: 'ms_recovery_pass',
+				email_recovery: user_email
+			},
+			success: function(data) {
+				if(data == "false") {
+					alert("O e-mail não está cadastrado");
+				} else {
+					alert(data);
+					location.reload();
+				}
+			}
+		});
+	});
+
+	//buscar video
+	$(document).on('keyup', '.search-input > input', function(event) {
+		event.preventDefault();
+		var key = $(this).val();
+		$('a.close-search, #search-content').removeClass('hide');
+
+		$.ajax({
+			data: {
+				action: 'ms_search_term',
+				keyword: key
+			},
+			success: function(data) {
+				$('.search-result').html(data);
+			}
+		});
+	});
+
+	//fechar busca
+	$(document).on('click', 'a.close-search', function(event) {
+		event.preventDefault();
+		$(this).addClass('hide');
+		$('#search-content').addClass('hide');
+		$('.search-input > input').val('');
+	});	
 	
 })();

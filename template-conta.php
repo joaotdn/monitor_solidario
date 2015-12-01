@@ -93,7 +93,7 @@ if ( $the_query->have_posts() ) :  while ( $the_query->have_posts() ) : $the_que
 
                 <p>
                   <label for="instituicao" class="no-margin">Instituição de ensino</label>
-                  <input type="text" name="instituicao" id="instituicao" class="small-12 left" title="Instituição de ensino" disabled="disabled" value="<?php echo $current_user->first_name; ?>">
+                  <input type="text" name="instituicao" id="instituicao" class="small-12 left" title="Instituição de ensino" disabled="disabled" value="UNIPE">
                 </p>
 
                 <p>

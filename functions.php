@@ -1,33 +1,32 @@
 <?php
-define('THEME_VERSION', '1.0');
+define('THEME_VERSION', '1.1');
 
 add_theme_support('post-thumbnails');
 set_post_thumbnail_size( 242, 220, true );
 
 /**
- * Configure funções para campos personalizados da aplicação
- */
+* Configure funções para campos personalizados da aplicação
+*/
 define( 'USE_LOCAL_ACF_CONFIGURATION', true ); // apenas conf. local
 add_filter('acf/settings/path', 'plandd_acf_path');
 function plandd_acf_path( $path ) {
-	   // update path
-	   $path = get_stylesheet_directory() . '/includes/acf/';
-	   // return
-	   return $path;
+     // update path
+     $path = get_stylesheet_directory() . '/includes/acf/';
+     // return
+     return $path;
 }
 add_filter('acf/settings/dir', 'plandd_acf_dir');
 function plandd_acf_dir( $dir ) {
-	   // update path
-	   $dir = get_stylesheet_directory_uri() . '/includes/acf/';
-	   // return
-	   return $dir;
+     // update path
+     $dir = get_stylesheet_directory_uri() . '/includes/acf/';
+     // return
+     return $dir;
 }
 /**
  * Framework para personalização de campos
  * (custom meta post)
  */
 include_once( get_stylesheet_directory() . '/includes/acf/acf.php' );
-include_once( get_stylesheet_directory() . '/includes/acf-repeater/acf-repeater.php' );
 define( 'ACF_LITE' , true );
 //include_once( get_stylesheet_directory() . '/includes/acf/preconfig.php' );
 
@@ -88,8 +87,8 @@ function ms_user_login() {
 	$pass = $_GET['user_senha'];
 
 	if(!empty($login) && !empty($pass)) {
-		$login = filter_var($login,FILTER_SANITIZE_STRING);
-		$pass = filter_var($pass,FILTER_SANITIZE_STRING);
+		//$login = filter_var($login,FILTER_SANITIZE_STRING);
+		//$pass = filter_var($pass,FILTER_SANITIZE_STRING);
 
 		$creds = array();
 	    $creds['user_login'] =  $login;
@@ -103,6 +102,8 @@ function ms_user_login() {
 		print('false');
 		exit();
 	}
+
+	//echo $login . "-" . $pass;
 
 	exit();
 }
@@ -188,7 +189,8 @@ function ms_add_user() {
 		        "user_login" => $email,
 		        "user_pass" => md5($senha),
 		        "user_email" => $email,
-		        'display_name' => $nome
+		        'display_name' => $nome,
+		        //"first_name" => $instituicao
 		      )
 		    );
 		    $wpdb->insert_id;
@@ -228,20 +230,61 @@ function ms_send_video() {
 	$params = array();
 	parse_str($_post, $params);
 
-	$video_id = post_exists( $params['video-title'] );
+	$video_id = wp_insert_post( array(
+        "post_title" => $params['video-title'],
+        "post_type" => 'post',
+        "post_status" => "pending",
+        "post_author" => $current_user->ID
+    ));
+    update_field('ms_video', $params['video-embed'], $video_id);
 
-	if(!$video_id) {
-		$video_id = wp_insert_post( array(
-            "post_title" => $params['video-title'],
-            "post_type" => 'post',
-            "post_status" => "pending",
-            "post_author" => $current_user->ID
-        ));
-        update_field('ms_video', $params['video-embed'], $video_id);
+	exit();
+}
+
+//recuperar senha
+add_action('wp_ajax_nopriv_ms_recovery_pass', 'ms_recovery_pass');
+add_action('wp_ajax_ms_recovery_pass', 'ms_recovery_pass');
+
+function ms_recovery_pass() {
+	$user_email = $_GET['email_recovery'];
+	$user = get_user_by( 'login', $user_email );
+	
+	if($user && !user_can( $user->ID , 'manage_options' )) {
+		$email = $user_email->user_email;
+		$_user_email = explode('@', $email);
+		$new_pass = uniqid();
+
+		if(wp_update_user( array( 'ID' => $user->ID, 'user_pass' => $new_pass ) )) {
+			if(wp_mail( $user_email, '[Monitor solidário] - Sua nova senha', 'Sua nova senha é ' . $new_pass))
+				echo 'Sua nova senha foi enviada para ' . $_user_email[0] . '@***.***';
+		}
 	} else {
 		echo "false";
 		exit();
 	}
+
+	echo "true";
+	exit();
+}
+
+/**
+ * Busca por videos
+ */
+add_action('wp_ajax_nopriv_ms_search_term', 'ms_search_term');
+add_action('wp_ajax_ms_search_term', 'ms_search_term');
+
+function ms_search_term() {
+	$term = $_GET['keyword'];
+	
+	$the_query = new WP_Query( array( 's' => $term, 'post_type' => 'post', 'posts_per_page' => 12, 'orderby' => 'date', 'post_status' => 'publish' ) );
+  	if ( $the_query->have_posts() ) :  while ( $the_query->have_posts() ) : $the_query->the_post();
+    global $post;
+    	?>
+		<figure class="small-12 left">
+			<h5 class="font-bold no-margin"><a href="<?php the_permalink(); ?>" class="primary"><span class="fi-video"></span> <span><?php the_title(); ?></span></a><h5>
+		</figure>
+    	<?php
+    endwhile; wp_reset_postdata(); endif;
 
 	exit();
 }

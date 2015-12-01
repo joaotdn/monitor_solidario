@@ -41,24 +41,18 @@
             <li>
               <h4 class="success font-bold no-margin">Mais vistos</h4>
             </li>
+<?php
+$popularpost = new WP_Query( array( 'posts_per_page' => 10, 'meta_key' => 'wpb_post_views_count', 'orderby' => 'meta_value_num', 'order' => 'DESC'  ) );
+while ( $popularpost->have_posts() ) : $popularpost->the_post();
+?>
             <li>
-              <a href="#"><span class="fi-play"></span> Lorem ipsum dolor sit amet, consectetur adipisicing elit</a>
+              <a href="<?php the_permalink(); ?>"><span class="fi-play"></span> <?php the_title(); ?></a>
             </li>
-            <li>
-              <a href="#"><span class="fi-play"></span> Lorem ipsum dolor sit amet, consectetur adipisicing elit</a>
-            </li>
-            <li>
-              <a href="#"><span class="fi-play"></span> Lorem ipsum dolor sit amet, consectetur adipisicing elit</a>
-            </li>
-            <li>
-              <a href="#"><span class="fi-play"></span> Lorem ipsum dolor sit amet, consectetur adipisicing elit</a>
-            </li>
-            <li>
-              <a href="#"><span class="fi-play"></span> Lorem ipsum dolor sit amet, consectetur adipisicing elit</a>
-            </li>
-            <li>
-              <a href="#"><span class="fi-play"></span> Lorem ipsum dolor sit amet, consectetur adipisicing elit</a>
-            </li>
+<?php
+endwhile;
+
+wp_reset_query();
+?>
           </ul>
         </div>
 

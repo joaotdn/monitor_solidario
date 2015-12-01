@@ -35,7 +35,7 @@ get_header();
           <ul class="no-bullet">
             <li><a href="<?php echo home_url(); ?>"><span class="fi-home"></span> <span>Início</span></a></li>
             <li><a href="<?php echo get_page_link($page_conta->ID); ?>"><span class="fi-torso"></span> <span>Minha conta</span></a></li>
-            <li><a href="#"><span class="fi-video"></span> <span>Meus vídeos</span></a></li>
+            <li><a href="<?php echo get_author_posts_url($current_user->ID); ?>"><span class="fi-video"></span> <span>Meus vídeos</span></a></li>
           </ul>
 
           <ul id="popular" class="no-bullet">
